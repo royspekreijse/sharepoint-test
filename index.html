@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Productlijst</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ngOfficeUiFabric/0.12.1/ngOfficeUiFabric.min.js"></script>
+  <link href="https://localhost:8443/node_modules/office-ui-fabric/dist/css/fabric.min.css" rel="stylesheet" type="text/css">
+  <link href="https://localhost:8443/node_modules/office-ui-fabric/dist/css/fabric.components.min.css" rel="stylesheet" type="text/css">    
+</head>
+
+<body>
+<h3>Productlijst</h3>
+<div id="container">
+  <div data-ng-controller="homeController as vm">
+    <div id="loading" ng-show="vm.isLoading">
+      <uif-spinner>Loading...</uif-spinner>
+    </div>
+    <div id="entryform" ng-show="vm.isLoading === false">
+      <input ng-model="vm.searchstring.$" ng-change="vm.updateFilter();" placeholder="Zoeken ..." ng-model-options="{ debounce: 1000 }" />
+      <h3>items:{{vm.lijstItemsCollection.length}}</span></h3>      
+    </div>    
+    <uif-table ng-show="vm.isLoading === false">  
+        <uif-table-row>            
+            <uif-table-header uif-order-by="Name" >File name</uif-table-header>            
+            <uif-table-header uif-order-by="TimeLastModified" >Modified</uif-table-header>
+            <uif-table-header uif-order-by="ListItemAllFields.Document_x0020_Type" >
+               <uif-dropdown ng-model="vm.searchstring.ListItemAllFields.Document_x0020_Type">
+                  <uif-dropdown-option value="{{value}}" ng-repeat="(key, value) in vm.documentTypes" title="{{value}}">{{value}}</uif-dropdown-option>
+               </uif-dropdown>
+            </uif-table-header>
+            <uif-table-header uif-order-by="ListItemAllFields.Product_x0020_Type" >                          
+               <uif-dropdown ng-model="vm.searchstring.ListItemAllFields.Product_x0020_Type">
+                  <uif-dropdown-option value="{{value}}" ng-repeat="(key, value) in vm.productTypes" title="{{value}}">{{value}}</uif-dropdown-option>
+               </uif-dropdown>
+            </uif-table-header>
+        </uif-table-row>
+        <uif-table-row ng-repeat="f in vm.lijstItemsCollection | filter:vm.searchstring:strict | orderBy:table.orderBy:!table.orderAsc | limitTo: 30">            
+            <uif-table-cell>
+              <uif-button uif-type="command" ng-href="{{f.ServerRelativeUrl}}">
+                {{f.Name}}
+              </uif-button>
+            </uif-table-cell>            
+            <uif-table-cell>{{f.TimeLastModified | date:'dd-MM-yyyy H:mm'}}</uif-table-cell>
+            <uif-table-cell>{{f.ListItemAllFields.Document_x0020_Type}}</uif-table-cell>
+            <uif-table-cell>{{f.ListItemAllFields.Product_x0020_Type}}</uif-table-cell>            
+        </uif-table-row>
+    </uif-table>  
+
+    <!--
+    <uif-list id="items" ng-show="vm.isLoading === false" >
+      <uif-list-item ng-repeat="lijstitem in vm.lijstItemsCollection" uif-item="lijstitem">
+        <uif-list-item-primary-text>{{lijstitem.title}}</uif-list-item-primary-text>
+        <uif-list-item-actions>
+          <uif-list-item-action ng-click="vm.openDocument(lijstitem)">
+            <uif-icon uif-type="check"></uif-icon>
+          </uif-list-item-action>
+        </uif-list-item-actions>
+      </uif-list-item>
+    </uif-list>
+    -->
+  </div>
+</div>
+
+<script src="https://localhost:8443/app/app.module.js"></script>
+<script src="https://localhost:8443/app/app.config.js"></script>
+<script src="https://localhost:8443/app/data.service.js"></script>
+<script src="https://localhost:8443/app/home.controller.js"></script>
+<script>
+  angular.bootstrap(document.getElementById('container'), ['productapp']);
+</script>
+</body>
+
+</html>
